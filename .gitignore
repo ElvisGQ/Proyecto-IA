@@ -1,0 +1,18 @@
+# Ignore Python virtual environment
+projectenv/
+.venv/
+
+# Bytecode
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# System files
+.DS_Store
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+catboost_info/
