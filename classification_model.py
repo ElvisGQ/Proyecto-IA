@@ -8,6 +8,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, accuracy_score
 import joblib
 from catboost import CatBoostClassifier
+import os
+
+# Create directories if they don't exist
+os.makedirs('models/classification', exist_ok=True)
+os.makedirs('encoders/classification', exist_ok=True)
+os.makedirs('data/classification', exist_ok=True)  # For test data
 
 # Load CSV from local path
 df = pd.read_csv('parking.csv')
@@ -31,10 +37,15 @@ X = df[['Día', 'Hora', 'Espacio', 'Clima']]
 y = df['Estado']
 
 # Train/test split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# ✅ SAVE TEST DATA FOR STREAMLIT APP
+test_data = X_test.copy()
+test_data['Estado'] = y_test  # Add true labels
+test_data.to_csv('data/classification/test_data.csv', index=False)
+print(f"✅ Test data saved: {len(test_data)} samples in 'data/test_data.csv'")
 
 # ✅ Polynomial features for Logistic Regression only
-
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
@@ -134,3 +145,34 @@ joblib.dump(poly, 'encoders/classification/poly_transformer.pkl')
 joblib.dump(scaler, 'encoders/classification/scaler.pkl')
 
 print("Modelos XGBoost, RandomForest, LogisticRegression, CatBoost y codificadores guardados como archivos .pkl.")
+
+# ✅ OPTIONAL: Save additional evaluation data for detailed analysis
+evaluation_results = {
+    'XGBoost': {
+        'y_true': y_test.tolist(),
+        'y_pred': xgb_y_pred.tolist(),
+        'accuracy': accuracy_score(y_test, xgb_y_pred)
+    },
+    'RandomForest': {
+        'y_true': y_test.tolist(),
+        'y_pred': rf_y_pred.tolist(),
+        'accuracy': accuracy_score(y_test, rf_y_pred)
+    },
+    'LogisticRegression': {
+        'y_true': y_test.tolist(),
+        'y_pred': lr_y_pred.tolist(),
+        'accuracy': accuracy_score(y_test, lr_y_pred)
+    },
+    'CatBoost': {
+        'y_true': y_test.tolist(),
+        'y_pred': cat_y_pred.tolist(),
+        'accuracy': accuracy_score(y_test, cat_y_pred)
+    }
+}
+
+import json
+with open('data/classification/model_evaluation_results.json', 'w') as f:
+    json.dump(evaluation_results, f, indent=2)
+
+print("✅ Evaluation results saved to 'data/model_evaluation_results.json'")
+print(f"✅ Test data contains {len(test_data)} samples with columns: {list(test_data.columns)}")

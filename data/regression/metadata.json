@@ -1,0 +1,31 @@
+{
+  "feature_columns": [
+    "D\u00eda",
+    "Hora",
+    "clima_Lluvioso",
+    "clima_Nublado"
+  ],
+  "target_column": "espacios_disponibles",
+  "days_order": [
+    "Lunes",
+    "Martes",
+    "Mi\u00e9rcoles",
+    "Jueves",
+    "Viernes"
+  ],
+  "clima_categories": [
+    "Despejado",
+    "Lluvioso",
+    "Nublado"
+  ],
+  "encoded_clima_features": [
+    "clima_Lluvioso",
+    "clima_Nublado"
+  ],
+  "total_spaces": 20,
+  "data_shape": {
+    "train_samples": 49,
+    "test_samples": 21,
+    "features": 4
+  }
+}
